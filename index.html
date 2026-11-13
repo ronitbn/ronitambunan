@@ -1,12 +1,559 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kelas Bu Sari</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Informatika Kelas X</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#101044,#174b82);
+  min-height: 100vh;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.container {
+  background: white;
+  color: #222;
+  width: 100%;
+  max-width: 650px;
+  padding: 30px;
+  border-radius: 22px;
+  box-shadow: 0 15px 40px #0005;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.header h1 {
+  color: #174bba;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.header p {
+  color: #666;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  margin: 20px 0;
+  font-size: 16px;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.03);
+}
+
+.start-btn, .next-btn {
+  background: #2456dc;
+  color: white;
+  width: 100%;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  margin: 18px 0;
+  font-weight: bold;
+  color: #2456dc;
+}
+
+.progress {
+  background: #ddd;
+  height: 9px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 25px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: #20c997;
+  transition: 0.4s;
+}
+
+.question {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.option {
+  width: 100%;
+  text-align: left;
+  background: #f0f3fa;
+  margin-bottom: 12px;
+  color: #222;
+  border: 2px solid transparent;
+}
+
+.option:hover:not(:disabled) {
+  background: #e0eaff;
+  border-color: #2456dc;
+}
+
+.option.correct {
+  background: #d5f8e5;
+  border-color: #16a34a;
+}
+
+.option.wrong {
+  background: #ffe0e0;
+  border-color: #dc2626;
+}
+
+.option:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.feedback {
+  margin: 15px 0;
+  padding: 15px;
+  border-radius: 10px;
+  display: none;
+  line-height: 1.5;
+}
+
+.next-btn {
+  display: none;
+  margin-top: 15px;
+}
+
+.result {
+  text-align: center;
+  display: none;
+}
+
+.result h2 {
+  color: #2456dc;
+  margin-bottom: 20px;
+}
+
+.score {
+  font-size: 55px;
+  color: #16a34a;
+  font-weight: bold;
+  margin: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 25px;
+  color: #777;
+  font-size: 12px;
+}
+
+#quiz {
+  display: none;
+}
+</style>
 </head>
+
 <body>
-  <h1>Selamat datang!</h1>
-  <p>Website kelas Fisika.</p>
+
+<div class="container">
+
+  <div class="header">
+    <h1>💻 KUIS INFORMATIKA</h1>
+    <p>Petualangan Digital Siswa Kelas X</p>
+    <p>Belajar • Berpikir • Berprestasi</p>
+  </div>
+
+  <div id="start">
+    <h2>Selamat Datang! 👋</h2>
+    <p>Siap menguji kemampuan Informatika kamu?</p>
+
+    <input type="text" id="nama"
+    placeholder="Masukkan nama lengkap kamu">
+
+    <button class="start-btn" onclick="mulai()">
+      🚀 MULAI KUIS
+    </button>
+  </div>
+
+  <div id="quiz">
+
+    <div class="info">
+      <span id="nomor">Soal 1/10</span>
+      <span id="timer">⏱️ 20 detik</span>
+    </div>
+
+    <div class="progress">
+      <div class="progress-bar" id="progress"></div>
+    </div>
+
+    <div class="question" id="pertanyaan"></div>
+
+    <div id="pilihan"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <button class="next-btn" id="next"
+    onclick="selanjutnya()">
+      SOAL BERIKUTNYA ➜
+    </button>
+
+  </div>
+
+  <div class="result" id="hasil">
+    <h2>🏆 KUIS SELESAI!</h2>
+
+    <p id="ucapan"></p>
+
+    <div class="score" id="nilai"></div>
+
+    <h3 id="predikat"></h3>
+
+    <p id="detail"></p>
+
+    <button class="start-btn"
+    onclick="location.reload()">
+      🔄 ULANGI KUIS
+    </button>
+  </div>
+
+  <div class="footer">
+    © 2026 | Kuis Informatika Kelas X
+    <br>
+    Semangat Belajar dan Raih Prestasi!
+  </div>
+
+</div>
+
+<script>
+
+const soal = [
+
+{
+q:"Apa kepanjangan dari CPU?",
+a:["Central Processing Unit",
+"Computer Personal Unit",
+"Central Program Utility",
+"Control Processing User"],
+b:0,
+e:"CPU adalah Central Processing Unit, yaitu unit pemroses utama komputer."
+},
+
+{
+q:"Perangkat berikut yang termasuk alat input adalah...",
+a:["Monitor","Printer","Keyboard","Speaker"],
+b:2,
+e:"Keyboard digunakan untuk memasukkan data atau perintah ke komputer."
+},
+
+{
+q:"Manakah yang termasuk sistem operasi komputer?",
+a:["Microsoft Word","Windows","Google Chrome","PowerPoint"],
+b:1,
+e:"Windows merupakan sistem operasi yang mengelola perangkat keras dan perangkat lunak."
+},
+
+{
+q:"Apa fungsi utama RAM?",
+a:["Menyimpan data sementara",
+"Mencetak dokumen",
+"Menghubungkan komputer ke internet",
+"Menyimpan data permanen"],
+b:0,
+e:"RAM menyimpan data sementara yang sedang digunakan komputer."
+},
+
+{
+q:"Internet merupakan...",
+a:["Jaringan komputer lokal saja",
+"Jaringan komputer global",
+"Program pengolah kata",
+"Perangkat keras komputer"],
+b:1,
+e:"Internet merupakan jaringan komputer global yang saling terhubung."
+},
+
+{
+q:"Perangkat yang digunakan untuk menghubungkan beberapa komputer dalam jaringan LAN adalah...",
+a:["Scanner","Switch","Keyboard","Monitor"],
+b:1,
+e:"Switch menghubungkan beberapa perangkat dalam jaringan lokal."
+},
+
+{
+q:"Apa kepanjangan dari HTML?",
+a:["HyperText Markup Language",
+"High Transfer Machine Language",
+"Hyper Tool Main Link",
+"Home Text Making Language"],
+b:0,
+e:"HTML adalah HyperText Markup Language, bahasa markup untuk membuat struktur halaman web."
+},
+
+{
+q:"Manakah contoh aplikasi pengolah angka?",
+a:["Microsoft Word","Microsoft Excel",
+"Microsoft Paint","Notepad"],
+b:1,
+e:"Microsoft Excel digunakan untuk mengolah angka, tabel, dan data."
+},
+
+{
+q:"Bilangan biner menggunakan angka...",
+a:["0 dan 1","1 dan 2","0 sampai 9","A sampai F"],
+b:0,
+e:"Sistem bilangan biner menggunakan dua digit, yaitu 0 dan 1."
+},
+
+{
+q:"Tindakan yang tepat untuk menjaga keamanan akun adalah...",
+a:["Membagikan password",
+"Menggunakan password yang kuat",
+"Menggunakan password yang sama di semua akun",
+"Membuka semua tautan tidak dikenal"],
+b:1,
+e:"Password yang kuat dan unik membantu melindungi akun dari akses tidak sah."
+}
+
+];
+
+let indeks = 0;
+let skor = 0;
+let waktu = 20;
+let interval;
+let namaSiswa = "";
+let sudahJawab = false;
+
+function mulai() {
+
+  namaSiswa =
+  document.getElementById("nama").value.trim();
+
+  if(namaSiswa === "") {
+    alert("Silakan masukkan nama terlebih dahulu!");
+    return;
+  }
+
+  document.getElementById("start").style.display="none";
+  document.getElementById("quiz").style.display="block";
+
+  tampilkanSoal();
+}
+
+function tampilkanSoal() {
+
+  sudahJawab = false;
+  waktu = 20;
+
+  clearInterval(interval);
+
+  let s = soal[indeks];
+
+  document.getElementById("nomor").innerText =
+  "Soal " + (indeks+1) + "/" + soal.length;
+
+  document.getElementById("pertanyaan").innerText =
+  s.q;
+
+  document.getElementById("progress").style.width =
+  ((indeks)/soal.length*100)+"%";
+
+  let pilihan = document.getElementById("pilihan");
+  pilihan.innerHTML = "";
+
+  s.a.forEach((jawaban,i)=>{
+
+    let btn = document.createElement("button");
+
+    btn.className = "option";
+    btn.innerText =
+    String.fromCharCode(65+i)+". "+jawaban;
+
+    btn.onclick = ()=>jawab(i,btn);
+
+    pilihan.appendChild(btn);
+
+  });
+
+  document.getElementById("feedback").style.display="none";
+  document.getElementById("next").style.display="none";
+
+  hitungMundur();
+}
+
+function hitungMundur() {
+
+  document.getElementById("timer").innerText =
+  "⏱️ "+waktu+" detik";
+
+  interval = setInterval(()=>{
+
+    waktu--;
+
+    document.getElementById("timer").innerText =
+    "⏱️ "+waktu+" detik";
+
+    if(waktu <= 0) {
+
+      clearInterval(interval);
+
+      if(!sudahJawab) {
+        jawab(-1,null);
+      }
+
+    }
+
+  },1000);
+}
+
+function jawab(pilihan, tombol) {
+
+  if(sudahJawab) return;
+
+  sudahJawab = true;
+  clearInterval(interval);
+
+  let s = soal[indeks];
+  let tombolSemua =
+  document.querySelectorAll(".option");
+
+  tombolSemua.forEach(btn=>{
+    btn.disabled = true;
+  });
+
+  if(pilihan === s.b) {
+
+    skor++;
+
+    tombol.classList.add("correct");
+
+  } else {
+
+    if(tombol) {
+      tombol.classList.add("wrong");
+    }
+
+    tombolSemua[s.b].classList.add("correct");
+
+  }
+
+  let feedback =
+  document.getElementById("feedback");
+
+  feedback.style.display="block";
+
+  if(pilihan === s.b) {
+
+    feedback.style.background="#d5f8e5";
+    feedback.innerHTML="✅ <b>Benar!</b> "+s.e;
+
+  } else if(pilihan === -1) {
+
+    feedback.style.background="#fff0ce";
+    feedback.innerHTML="⏰ <b>Waktu habis!</b> "+s.e;
+
+  } else {
+
+    feedback.style.background="#ffe0e0";
+    feedback.innerHTML="❌ <b>Belum tepat.</b> "+s.e;
+
+  }
+
+  document.getElementById("next").style.display="block";
+
+  if(indeks === soal.length-1) {
+    document.getElementById("next").innerText =
+    "LIHAT HASIL 🏆";
+  }
+
+}
+
+function selanjutnya() {
+
+  indeks++;
+
+  if(indeks < soal.length) {
+
+    tampilkanSoal();
+
+  } else {
+
+    selesai();
+
+  }
+
+}
+
+function selesai() {
+
+  clearInterval(interval);
+
+  document.getElementById("quiz").style.display="none";
+  document.getElementById("hasil").style.display="block";
+
+  let nilaiAkhir =
+  Math.round((skor/soal.length)*100);
+
+  document.getElementById("ucapan").innerText =
+  "Hebat, "+namaSiswa+"! Kamu sudah menyelesaikan kuis.";
+
+  document.getElementById("nilai").innerText =
+  nilaiAkhir;
+
+  let predikat = "";
+
+  if(nilaiAkhir >= 90) {
+    predikat="🌟 SANGAT BAIK!";
+  }
+  else if(nilaiAkhir >= 80) {
+    predikat="👏 BAIK!";
+  }
+  else if(nilaiAkhir >= 70) {
+    predikat="👍 CUKUP!";
+  }
+  else {
+    predikat="💪 TETAP SEMANGAT BELAJAR!";
+  }
+
+  document.getElementById("predikat").innerText =
+  predikat;
+
+  document.getElementById("detail").innerText =
+  "Jawaban benar: "+skor+
+  " dari "+soal.length+" soal.";
+
+}
+
+</script>
+
 </body>
 </html>
